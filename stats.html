@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JournalMetrics - Statistics Analysis</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background-color: #f5f5f5;
+      color: #333;
+      line-height: 1.6;
+    }
+    
+    .header {
+      background-color: #1a73e8;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+    
+    .header h1 {
+      font-size: 24px;
+      margin-bottom: 8px;
+    }
+    
+    .header p {
+      opacity: 0.9;
+      font-size: 14px;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    .stats-card {
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    
+    .stats-card h2 {
+      font-size: 18px;
+      color: #1a73e8;
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #e0e0e0;
+    }
+    
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    
+    .summary-item {
+      text-align: center;
+      padding: 16px;
+      background-color: #f8f9fa;
+      border-radius: 8px;
+    }
+    
+    .summary-item .value {
+      font-size: 28px;
+      font-weight: 700;
+      color: #1a73e8;
+    }
+    
+    .summary-item .label {
+      font-size: 13px;
+      color: #666;
+      margin-top: 4px;
+    }
+    
+    .distribution-bar {
+      display: flex;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    
+    .distribution-bar .label {
+      width: 100px;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+    
+    .distribution-bar .bar-container {
+      flex: 1;
+      height: 24px;
+      background-color: #e0e0e0;
+      border-radius: 4px;
+      overflow: hidden;
+      margin: 0 12px;
+    }
+    
+    .distribution-bar .bar {
+      height: 100%;
+      background-color: #1a73e8;
+      border-radius: 4px;
+      transition: width 0.3s ease;
+    }
+    
+    .distribution-bar .count {
+      width: 60px;
+      text-align: right;
+      font-size: 14px;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+    
+    .top-journal-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    
+    .top-journal-table th,
+    .top-journal-table td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #e0e0e0;
+    }
+    
+    .top-journal-table th {
+      background-color: #f8f9fa;
+      font-weight: 600;
+      font-size: 14px;
+    }
+    
+    .top-journal-table tr:hover {
+      background-color: #f8f9fa;
+    }
+    
+    .top-journal-table .rank {
+      font-weight: 700;
+      color: #1a73e8;
+    }
+    
+    .q1 { color: #4CAF50; }
+    .q2 { color: #2196F3; }
+    .q3 { color: #FF9800; }
+    .q4 { color: #F44336; }
+    
+    .b1 { color: #E91E63; }
+    .b2 { color: #9C27B0; }
+    .b3 { color: #673AB7; }
+    .b4 { color: #3F51B5; }
+    
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: #666;
+    }
+    
+    .loading .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #1a73e8;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 16px;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .no-data {
+      text-align: center;
+      padding: 40px;
+      color: #999;
+    }
+    
+    .back-btn {
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: #1a73e8;
+      color: white;
+      text-decoration: none;
+      border-radius: 4px;
+      font-weight: 500;
+      transition: background-color 0.2s;
+    }
+    
+    .back-btn:hover {
+      background-color: #1557b0;
+    }
+    
+    .section-break {
+      margin-bottom: 24px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>📊 JournalMetrics - Statistics Analysis</h1>
+    <p>Analysis of journal impact factors, quartiles, and publication trends</p>
+    <p id="stats-timestamp" style="font-size: 12px; opacity: 0.7; margin-top: 4px;"></p>
+  </div>
+  
+  <div class="container">
+    <div id="loading" class="loading">
+      <div class="spinner"></div>
+      <p>Loading analysis data...</p>
+    </div>
+    
+    <div id="content" style="display: none;">
+      <div class="stats-card">
+        <h2>📈 Summary</h2>
+        <div class="summary-grid">
+          <div class="summary-item">
+            <div class="value" id="total-count">0</div>
+            <div class="label">Total Articles</div>
+          </div>
+          <div class="summary-item">
+            <div class="value" id="sci-count">0</div>
+            <div class="label">SCI Articles</div>
+          </div>
+          <div class="summary-item">
+            <div class="value" id="avg-if">0.0</div>
+            <div class="label">Average IF</div>
+          </div>
+          <div class="summary-item">
+            <div class="value" id="median-if">0.0</div>
+            <div class="label">Median IF</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="stats-card">
+        <h2>🏆 JCR Quartile Distribution</h2>
+        <div id="jcr-distribution"></div>
+      </div>
+      
+      <div class="stats-card">
+        <h2>🏢 CAS Block Distribution</h2>
+        <div id="cas-distribution"></div>
+      </div>
+      
+      <div class="stats-card">
+        <h2>📅 Publication Year Distribution</h2>
+        <div id="year-distribution"></div>
+      </div>
+      
+      <div class="stats-card">
+        <h2>📊 Impact Factor Distribution</h2>
+        <div id="if-distribution"></div>
+      </div>
+      
+      <div class="stats-card">
+        <h2>🌐 Open Access Distribution</h2>
+        <div id="oa-distribution"></div>
+      </div>
+      
+      <div class="stats-card">
+        <h2>🎯 Top 10 Journals by Publication Count</h2>
+        <div style="overflow-x: auto;">
+        <table class="top-journal-table">
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th>Journal</th>
+              <th>Count</th>
+              <th>Avg IF</th>
+              <th>JCR</th>
+              <th>CAS</th>
+              <th>Self-Cite%</th>
+              <th>OA</th>
+              <th>APC</th>
+              <th>Articles</th>
+              <th>Publisher</th>
+              <th>Country</th>
+              <th>Website</th>
+            </tr>
+          </thead>
+          <tbody id="top-journals"></tbody>
+        </table>
+        </div>
+      </div>
+      
+      <div class="section-break">
+        <a href="#" class="back-btn" id="back-btn">← Back to PubMed</a>
+      </div>
+    </div>
+    
+    <div id="no-data" class="no-data" style="display: none;">
+      <p>No analysis data available.</p>
+      <p>Please run analysis from the PubMed search results page.</p>
+    </div>
+  </div>
+  
+  <script src="stats.js"></script>
+</body>
+</html>

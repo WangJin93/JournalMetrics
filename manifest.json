@@ -1,0 +1,50 @@
+{
+  "name": "JournalMetrics",
+  "manifest_version": 3,
+  "version": "1.0.2",
+  "description": "JournalMetrics - PubMed journal impact factor analysis, filtering, and statistics",
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "action": {
+    "default_icon": "icons/icon48.png",
+    "default_title": "JournalMetrics",
+    "default_popup": "popup.html"
+  },
+  "background": {
+    "service_worker": "background.js",
+    "module": true
+  },
+  "content_scripts": [
+    {
+      "js": ["content-script.js"],
+      "css": ["style.css"],
+      "matches": ["*://pubmed.ncbi.nlm.nih.gov/*", "*://*.ncbi.nlm.nih.gov/*", "*://www.google.com/recaptcha/*"],
+      "run_at": "document_start",
+      "all_frames": true
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["data/filter_data.json", "data/pubmed_abb_data.json"],
+      "matches": ["*://pubmed.ncbi.nlm.nih.gov/*", "*://*.ncbi.nlm.nih.gov/*"]
+    },
+    {
+      "resources": ["main-world.js"],
+      "matches": ["*://pubmed.ncbi.nlm.nih.gov/*", "*://*.ncbi.nlm.nih.gov/*", "*://www.google.com/*"]
+    }
+  ],
+  "permissions": ["storage", "declarativeNetRequest", "tabs", "scripting"],
+  "host_permissions": ["*://pubmed.ncbi.nlm.nih.gov/*", "*://*.ncbi.nlm.nih.gov/*", "*://www.google.com/recaptcha/*", "*://recaptcha.net/*", "*://gapis.geekzu.org/*"],
+  "declarative_net_request": {
+    "rule_resources": [
+      {
+        "id": "pubmed_rules",
+        "enabled": true,
+        "path": "rules.json"
+      }
+    ]
+  }
+}

@@ -1,0 +1,45 @@
+[
+  {
+    "id": 1,
+    "priority": 1,
+    "action": {
+      "type": "redirect",
+      "redirect": {
+        "regexSubstitution": "https://recaptcha.net/recaptcha/\\1"
+      }
+    },
+    "condition": {
+      "regexFilter": "^https?://(?:www\\.|recaptcha\\.)google\\.com/recaptcha/(.*)",
+      "resourceTypes": ["main_frame", "sub_frame", "script", "xmlhttprequest", "image", "stylesheet", "font", "ping"]
+    }
+  },
+  {
+    "id": 2,
+    "priority": 1,
+    "action": {
+      "type": "redirect",
+      "redirect": {
+        "regexSubstitution": "https://gapis.geekzu.org/\\1"
+      }
+    },
+    "condition": {
+      "regexFilter": "^https?://ajax\\.googleapis\\.com/(.*)",
+      "resourceTypes": ["script", "stylesheet", "xmlhttprequest", "image", "font"]
+    }
+  },
+  {
+    "id": 3,
+    "priority": 1,
+    "action": {
+      "type": "modifyHeaders",
+      "responseHeaders": [
+        { "header": "content-security-policy", "operation": "remove" },
+        { "header": "content-security-policy-report-only", "operation": "remove" }
+      ]
+    },
+    "condition": {
+      "urlFilter": "||pubmed.ncbi.nlm.nih.gov",
+      "resourceTypes": ["main_frame", "sub_frame", "xmlhttprequest"]
+    }
+  }
+]
