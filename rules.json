@@ -38,7 +38,7 @@
       ]
     },
     "condition": {
-      "urlFilter": "||pubmed.ncbi.nlm.nih.gov",
+      "urlFilter": "||ncbi.nlm.nih.gov",
       "resourceTypes": ["main_frame", "sub_frame", "xmlhttprequest"]
     }
   }
