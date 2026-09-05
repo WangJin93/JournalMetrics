@@ -6,274 +6,134 @@
   <title>JournalMetrics</title>
   <style>
     body {
-      width: 320px;
+      width: 340px;
       padding: 16px;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       background-color: #f5f5f5;
     }
     h2 {
-      margin: 0 0 16px 0;
+      margin: 0 0 4px 0;
       font-size: 18px;
       color: #1a73e8;
-      border-bottom: 1px solid #e0e0e0;
-      padding-bottom: 8px;
     }
-    .option-group {
-      margin-bottom: 12px;
+    .subtitle { font-size: 12px; color: #666; margin: 0 0 2px 0; }
+    .subtitle2 { font-size: 11px; color: #999; margin: 0 0 10px 0; }
+    .actions { display: flex; gap: 8px; margin-bottom: 4px; }
+    .action-btn {
+      flex: 1;
+      padding: 7px 6px;
+      font-size: 12px;
+      font-weight: 600;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      background: #1a73e8;
+      color: #fff;
     }
+    .action-btn:hover { background: #1557b0; }
+    .action-btn.ghost { background: #e8eaed; color: #333; }
+    .action-btn.ghost:hover { background: #d8dade; }
+    .hint { font-size: 11px; color: #4caf50; margin: 2px 0 8px 0; }
+    .hint.gray { color: #999; }
+    .opt-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 8px 0;
+    }
+    .opt-row .opt-label { font-size: 13px; color: #333; line-height: 1.4; }
+    .opt-row .opt-label .sub { font-size: 11px; color: #999; }
+    .num-input {
+      width: 90px;
+      padding: 6px 8px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 13px;
+      text-align: right;
+    }
+    .num-input:focus { outline: 2px solid #1a73e8; border-color: #1a73e8; }
+    .option-group { margin-bottom: 2px; }
     .option-group label {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 8px 0;
+      padding: 6px 0;
       cursor: pointer;
-      font-size: 14px;
+      font-size: 13px;
       color: #333;
+      border-radius: 4px;
     }
-    .option-group label:hover {
-      background-color: #e8f0fe;
-      padding-left: 8px;
-      padding-right: 8px;
-      margin-left: -8px;
-      margin-right: -8px;
-    }
-    .option-group span {
-      flex: 1;
-    }
-    .toggle-switch {
-      position: relative;
-      width: 44px;
-      height: 24px;
-    }
-    .toggle-switch input {
-      opacity: 0;
-      width: 0;
-      height: 0;
-    }
+    .option-group label:hover { background-color: #e8f0fe; }
+    .option-group .opt-label { display: flex; align-items: center; gap: 6px; }
+    .toggle-switch { position: relative; width: 40px; height: 22px; flex-shrink: 0; }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; }
     .toggle-slider {
-      position: absolute;
-      cursor: pointer;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: #ccc;
-      transition: 0.3s;
-      border-radius: 24px;
+      position: absolute; cursor: pointer; inset: 0; background-color: #ccc;
+      transition: 0.3s; border-radius: 22px;
     }
     .toggle-slider:before {
-      position: absolute;
-      content: "";
-      height: 18px;
-      width: 18px;
-      left: 3px;
-      bottom: 3px;
-      background-color: white;
-      transition: 0.3s;
-      border-radius: 50%;
+      position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px;
+      background-color: white; transition: 0.3s; border-radius: 50%;
     }
-    input:checked + .toggle-slider {
-      background-color: #1a73e8;
-    }
-    input:focus + .toggle-slider {
-      box-shadow: 0 0 1px #1a73e8;
-    }
-    input:checked + .toggle-slider:before {
-      transform: translateX(20px);
-    }
+    input:checked + .toggle-slider { background-color: #1a73e8; }
+    input:checked + .toggle-slider:before { transform: translateX(18px); }
     .section-title {
-      font-size: 12px;
-      font-weight: bold;
-      color: #1a73e8;
-      margin-top: 20px;
-      margin-bottom: 8px;
-      padding-top: 12px;
-      border-top: 2px solid #1a73e8;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
+      font-size: 11px; font-weight: bold; color: #1a73e8;
+      margin-top: 12px; margin-bottom: 2px; padding-top: 8px;
+      border-top: 2px solid #1a73e8; text-transform: uppercase; letter-spacing: 0.5px;
     }
-    .section-title:first-of-type {
-      margin-top: 8px;
+    .tip {
+      font-size: 11px; color: #888; background: #eef4fd; border-radius: 6px;
+      padding: 8px 10px; margin-top: 10px; line-height: 1.6;
     }
-    .author-info {
-      margin-top: 16px;
-      padding: 12px;
-      background-color: #e8f0fe;
-      border-radius: 6px;
-      font-size: 12px;
-      color: #333;
-    }
-    .author-info .author-name {
-      font-weight: 600;
-      color: #1a73e8;
-      margin-bottom: 2px;
-    }
-    .author-info .author-affiliation {
-      color: #666;
-      margin-bottom: 4px;
-    }
-    .author-info a {
-      color: #1a73e8;
-      text-decoration: none;
-    }
-    .author-info a:hover {
-      text-decoration: underline;
-    }
-    .author-info .feedback-link {
-      margin-top: 6px;
-      display: block;
-      font-weight: 500;
-    }
-    .footer {
-      margin-top: 16px;
-      padding-top: 12px;
-      border-top: 1px solid #e0e0e0;
-      font-size: 12px;
-      color: #999;
-      text-align: center;
-    }
+    .footer { margin-top: 12px; padding-top: 10px; border-top: 1px solid #e0e0e0; font-size: 11px; color: #999; text-align: center; }
   </style>
 </head>
 <body>
   <h2>📊 JournalMetrics</h2>
-  <p style="font-size:12px;color:#666;margin:0 0 4px 0;">PubMed 期刊影响因子分析、筛选与统计</p>
-  <p style="font-size:11px;color:#999;margin:0 0 8px 0;">by Jingle Wang · 苏州大学公共卫生学院</p>
-  
-  <div class="section-title">Basic Info</div>
-  <div class="option-group">
-    <label>
-      <span>Impact Factor (IF)</span>
-      <div class="toggle-switch">
-        <input type="checkbox" id="ifToggle">
-        <span class="toggle-slider"></span>
-      </div>
-    </label>
-  </div>
-  <div class="option-group">
-    <label>
-      <span>JCR Quartile</span>
-      <div class="toggle-switch">
-        <input type="checkbox" id="jcrToggle">
-        <span class="toggle-slider"></span>
-      </div>
-    </label>
-  </div>
-  <div class="option-group">
-    <label>
-      <span>CAS Block</span>
-      <div class="toggle-switch">
-        <input type="checkbox" id="casToggle">
-        <span class="toggle-slider"></span>
-      </div>
-    </label>
-  </div>
-  <div class="option-group">
-    <label>
-      <span>Top Journal</span>
-      <div class="toggle-switch">
-        <input type="checkbox" id="topToggle">
-        <span class="toggle-slider"></span>
-      </div>
-    </label>
-  </div>
+  <p class="subtitle">PubMed 期刊影响因子分析、筛选与统计</p>
+  <p class="subtitle2">v1.2.0 · by Jingle Wang（苏州大学公共卫生学院）</p>
 
-  <div class="section-title">Access Helper</div>
-  <div class="option-group">
-    <label>
-      <span>Access Helper (reCAPTCHA Mirror)</span>
-      <div class="toggle-switch">
-        <input type="checkbox" id="accessHelperToggle">
-        <span class="toggle-slider"></span>
-      </div>
-    </label>
+  <div class="actions">
+    <button class="action-btn" id="open-pubmed">🔍 打开 PubMed</button>
+    <button class="action-btn ghost" id="reset-all">⟳ 恢复默认设置</button>
   </div>
+  <p class="hint">✓ 改动即时生效，无需刷新页面</p>
+
+  <div class="section-title">Basic Info（列表徽章）</div>
+  <div class="option-group"><label><span class="opt-label"><span>Impact Factor (IF)</span></span><span class="toggle-switch"><input type="checkbox" id="ifToggle"><span class="toggle-slider"></span></span></label></div>
+  <div class="option-group"><label><span class="opt-label"><span>JCR Quartile</span></span><span class="toggle-switch"><input type="checkbox" id="jcrToggle"><span class="toggle-slider"></span></span></label></div>
+  <div class="option-group"><label><span class="opt-label"><span>CAS Block</span></span><span class="toggle-switch"><input type="checkbox" id="casToggle"><span class="toggle-slider"></span></span></label></div>
+  <div class="option-group"><label><span class="opt-label"><span>Top Journal</span></span><span class="toggle-switch"><input type="checkbox" id="topToggle"><span class="toggle-slider"></span></span></label></div>
 
   <div class="section-title">Additional Info</div>
-  <div class="option-group">
-    <label>
-      <span>Self-Citation Rate</span>
-      <div class="toggle-switch">
-        <input type="checkbox" id="selfCitationToggle">
-        <span class="toggle-slider"></span>
-      </div>
-    </label>
-  </div>
-  <div class="option-group">
-    <label>
-      <span>Website</span>
-      <div class="toggle-switch">
-        <input type="checkbox" id="websiteToggle">
-        <span class="toggle-slider"></span>
-      </div>
-    </label>
-  </div>
-  <div class="option-group">
-    <label>
-      <span>Open Access</span>
-      <div class="toggle-switch">
-        <input type="checkbox" id="oaToggle">
-        <span class="toggle-slider"></span>
-      </div>
-    </label>
-  </div>
-  <div class="option-group">
-    <label>
-      <span>Publisher</span>
-      <div class="toggle-switch">
-        <input type="checkbox" id="publisherToggle">
-        <span class="toggle-slider"></span>
-      </div>
-    </label>
-  </div>
-  <div class="option-group">
-    <label>
-      <span>Country</span>
-      <div class="toggle-switch">
-        <input type="checkbox" id="countryToggle">
-        <span class="toggle-slider"></span>
-      </div>
-    </label>
-  </div>
-  <div class="option-group">
-    <label>
-      <span>Annual Article Count</span>
-      <div class="toggle-switch">
-        <input type="checkbox" id="articleCountToggle">
-        <span class="toggle-slider"></span>
-      </div>
-    </label>
-  </div>
-  <div class="option-group">
-    <label>
-      <span>Research Articles Proportion</span>
-      <div class="toggle-switch">
-        <input type="checkbox" id="researchProportionToggle">
-        <span class="toggle-slider"></span>
-      </div>
-    </label>
-  </div>
-  <div class="option-group">
-    <label>
-      <span>APC</span>
-      <div class="toggle-switch">
-        <input type="checkbox" id="apcToggle">
-        <span class="toggle-slider"></span>
-      </div>
-    </label>
-  </div>
+  <div class="option-group"><label><span class="opt-label"><span>Self-Citation Rate</span></span><span class="toggle-switch"><input type="checkbox" id="selfCitationToggle"><span class="toggle-slider"></span></span></label></div>
+  <div class="option-group"><label><span class="opt-label"><span>Website</span></span><span class="toggle-switch"><input type="checkbox" id="websiteToggle"><span class="toggle-slider"></span></span></label></div>
+  <div class="option-group"><label><span class="opt-label"><span>Open Access</span></span><span class="toggle-switch"><input type="checkbox" id="oaToggle"><span class="toggle-slider"></span></span></label></div>
+  <div class="option-group"><label><span class="opt-label"><span>Publisher</span></span><span class="toggle-switch"><input type="checkbox" id="publisherToggle"><span class="toggle-slider"></span></span></label></div>
+  <div class="option-group"><label><span class="opt-label"><span>Country</span></span><span class="toggle-switch"><input type="checkbox" id="countryToggle"><span class="toggle-slider"></span></span></label></div>
+  <div class="option-group"><label><span class="opt-label"><span>Annual Article Count</span></span><span class="toggle-switch"><input type="checkbox" id="articleCountToggle"><span class="toggle-slider"></span></span></label></div>
+  <div class="option-group"><label><span class="opt-label"><span>Research Articles Proportion</span></span><span class="toggle-switch"><input type="checkbox" id="researchProportionToggle"><span class="toggle-slider"></span></span></label></div>
+  <div class="option-group"><label><span class="opt-label"><span>APC</span></span><span class="toggle-switch"><input type="checkbox" id="apcToggle"><span class="toggle-slider"></span></span></label></div>
 
-  <div class="author-info">
-    <div class="author-name">Jingle Wang（王进）</div>
-    <div class="author-affiliation">苏州大学公共卫生学院</div>
-    <a href="mailto:jinwang93@suda.edu.cn">jinwang93@suda.edu.cn</a>
-    <a href="https://www.jingege.wang" target="_blank" class="feedback-link">🌐 个人网站</a>
-    <a href="https://www.jingege.wang/journalmetrics" target="_blank" class="feedback-link">📬 建议与反馈</a>
+  <div class="section-title">Analysis Settings</div>
+  <div class="opt-row">
+    <label for="maxResultsInput" class="opt-label">
+      <span>Max articles for “Analyze all”<br><span class="sub">全量分析文献上限</span></span>
+    </label>
+    <input type="number" id="maxResultsInput" min="1" max="10000" step="100" class="num-input">
   </div>
+  <p class="hint gray">范围 1–10000，默认 1000。统计时只抓取检索结果中前 N 条（按 PubMed 默认排序）。</p>
 
-  <div class="footer">
-    Data source: JCR & CAS Journal Lists
-  </div>
+  <div class="section-title">Network / Advanced</div>
+  <div class="option-group"><label><span class="opt-label"><span>Access Helper（reCAPTCHA 镜像等，规避 NCBI 反爬校验）</span></span><span class="toggle-switch"><input type="checkbox" id="accessHelperToggle"><span class="toggle-slider"></span></span></label></div>
 
+  <div class="tip">💡 <b>快速分析</b>：在 PubMed 检索结果页点击右下角绿色 <b>Analyze</b> 按钮，可选择分析<b>当前页</b>或<b>整次检索全部结果</b>（需网络访问 NCBI E-utilities），并导出 CSV / 复制中英文摘要。</div>
+
+  <div class="footer">Data source: JCR & CAS Journal Lists（本地快照，可能滞后）<br><a href="https://www.jingege.wang/journalmetrics" target="_blank" style="color:#1a73e8;">建议与反馈</a> · jinwang93@suda.edu.cn</div>
+
+  <script src="defaults.js"></script>
   <script src="popup.js"></script>
 </body>
 </html>

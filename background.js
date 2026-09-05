@@ -1,18 +1,6 @@
-const DEFAULT_SETTINGS = {
-  if: true,
-  jcr: true,
-  cas: true,
-  top: true,
-  selfCitationRate: false,
-  website: false,
-  oa: false,
-  publisher: false,
-  country: false,
-  annualArticleCount: false,
-  researchArticlesProportion: false,
-  apc: false,
-  accessHelper: true
-};
+// Shared default settings (single source of truth) - see defaults.js
+import './defaults.js';
+const DEFAULT_SETTINGS = globalThis.JM_DEFAULTS;
 
 chrome.runtime.onInstalled.addListener((details) => {
   chrome.storage.local.get(DEFAULT_SETTINGS, (stored) => {
@@ -20,7 +8,7 @@ chrome.runtime.onInstalled.addListener((details) => {
     chrome.storage.local.set(merged);
     console.log('[JournalMetrics] Plugin initialized with settings:', merged);
   });
-  
+
   if (details.reason === 'update') {
     console.log('[JournalMetrics] Plugin updated, refreshing rulesets');
     setAccessHelperEnabled(true);
@@ -61,7 +49,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     });
     return true;
   }
-  
+
   if (message.action === 'setAccessHelper') {
     const enabled = message.enabled;
     chrome.storage.local.set({ accessHelper: enabled }, () => {
@@ -70,7 +58,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     });
     return true;
   }
-  
+
   if (message.action === 'reloadTab') {
     if (sender.tab) {
       chrome.tabs.reload(sender.tab.id, { bypassCache: true });
@@ -78,7 +66,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     sendResponse({ success: true });
     return true;
   }
-  
+
   if (message.action === 'openPubMed') {
     chrome.tabs.create({ url: 'https://pubmed.ncbi.nlm.nih.gov/' });
     sendResponse({ success: true });
@@ -86,7 +74,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   }
 
   if (message.action === 'openStatsPage') {
-    chrome.storage.local.set({ statsData: message.statsData }, () => {
+    const statsData = message.statsData || {};
+    chrome.storage.local.set({ statsData: statsData }, () => {
       chrome.tabs.create({ url: chrome.runtime.getURL('stats.html') }, (tab) => {
         if (chrome.runtime.lastError) {
           console.error('[JournalMetrics] Error creating stats tab:', chrome.runtime.lastError);

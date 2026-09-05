@@ -1,8 +1,8 @@
 {
   "name": "JournalMetrics",
   "manifest_version": 3,
-  "version": "1.0.2",
-  "description": "JournalMetrics - PubMed journal impact factor analysis, filtering, and statistics",
+  "version": "1.2.0",
+  "description": "JournalMetrics - PubMed journal impact factor analysis, filtering, statistics, and full search-result analytics",
   "icons": {
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",
@@ -15,11 +15,11 @@
   },
   "background": {
     "service_worker": "background.js",
-    "module": true
+    "type": "module"
   },
   "content_scripts": [
     {
-      "js": ["content-script.js"],
+      "js": ["defaults.js", "content-script.js"],
       "css": ["style.css"],
       "matches": ["*://pubmed.ncbi.nlm.nih.gov/*", "*://*.ncbi.nlm.nih.gov/*", "*://www.google.com/recaptcha/*"],
       "run_at": "document_start",
@@ -37,7 +37,14 @@
     }
   ],
   "permissions": ["storage", "declarativeNetRequest", "tabs", "scripting"],
-  "host_permissions": ["*://pubmed.ncbi.nlm.nih.gov/*", "*://*.ncbi.nlm.nih.gov/*", "*://www.google.com/recaptcha/*", "*://recaptcha.net/*", "*://gapis.geekzu.org/*"],
+  "host_permissions": [
+    "*://pubmed.ncbi.nlm.nih.gov/*",
+    "*://*.ncbi.nlm.nih.gov/*",
+    "*://eutils.ncbi.nlm.nih.gov/*",
+    "*://www.google.com/recaptcha/*",
+    "*://recaptcha.net/*",
+    "*://gapis.geekzu.org/*"
+  ],
   "declarative_net_request": {
     "rule_resources": [
       {

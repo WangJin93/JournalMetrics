@@ -5,42 +5,28 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>JournalMetrics - Statistics Analysis</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
       background-color: #f5f5f5;
       color: #333;
       line-height: 1.6;
     }
-    
+
     .header {
-      background-color: #1a73e8;
+      background: linear-gradient(135deg, #1a73e8, #1557b0);
       color: white;
-      padding: 20px;
+      padding: 22px 20px;
       text-align: center;
     }
-    
-    .header h1 {
-      font-size: 24px;
-      margin-bottom: 8px;
-    }
-    
-    .header p {
-      opacity: 0.9;
-      font-size: 14px;
-    }
-    
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 20px;
-    }
-    
+    .header h1 { font-size: 22px; margin-bottom: 6px; }
+    .header p { opacity: 0.92; font-size: 13px; }
+    #stats-timestamp { font-size: 12px; opacity: 0.75; margin-top: 4px; }
+    .meta-line { font-size: 12px; opacity: 0.85; margin-top: 2px; word-break: break-all; }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+
     .stats-card {
       background-color: white;
       border-radius: 8px;
@@ -48,259 +34,249 @@
       padding: 20px;
       margin-bottom: 20px;
     }
-    
     .stats-card h2 {
-      font-size: 18px;
+      font-size: 17px;
       color: #1a73e8;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
       padding-bottom: 8px;
       border-bottom: 2px solid #e0e0e0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
-    
+    .stats-card h2 .card-note { font-size: 12px; color: #999; font-weight: 400; }
+
     .summary-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 16px;
-      margin-bottom: 20px;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 14px;
+      margin-bottom: 14px;
     }
-    
     .summary-item {
       text-align: center;
-      padding: 16px;
+      padding: 16px 8px;
       background-color: #f8f9fa;
       border-radius: 8px;
+      border: 1px solid #eef0f2;
     }
-    
-    .summary-item .value {
-      font-size: 28px;
-      font-weight: 700;
-      color: #1a73e8;
-    }
-    
-    .summary-item .label {
+    .summary-item .value { font-size: 26px; font-weight: 700; color: #1a73e8; }
+    .summary-item .label { font-size: 12px; color: #666; margin-top: 4px; }
+    .summary-item .sub { font-size: 11px; color: #999; margin-top: 2px; }
+    .highlight-card { border-left: 4px solid #4CAF50; }
+
+    .actions-bar { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; }
+    .btn {
+      border: none;
+      border-radius: 6px;
+      padding: 9px 16px;
       font-size: 13px;
-      color: #666;
-      margin-top: 4px;
-    }
-    
-    .distribution-bar {
-      display: flex;
-      align-items: center;
-      margin-bottom: 8px;
-    }
-    
-    .distribution-bar .label {
-      width: 100px;
-      font-size: 14px;
-      flex-shrink: 0;
-    }
-    
-    .distribution-bar .bar-container {
-      flex: 1;
-      height: 24px;
-      background-color: #e0e0e0;
-      border-radius: 4px;
-      overflow: hidden;
-      margin: 0 12px;
-    }
-    
-    .distribution-bar .bar {
-      height: 100%;
-      background-color: #1a73e8;
-      border-radius: 4px;
-      transition: width 0.3s ease;
-    }
-    
-    .distribution-bar .count {
-      width: 60px;
-      text-align: right;
-      font-size: 14px;
       font-weight: 600;
-      flex-shrink: 0;
-    }
-    
-    .top-journal-table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-    
-    .top-journal-table th,
-    .top-journal-table td {
-      padding: 12px;
-      text-align: left;
-      border-bottom: 1px solid #e0e0e0;
-    }
-    
-    .top-journal-table th {
-      background-color: #f8f9fa;
-      font-weight: 600;
-      font-size: 14px;
-    }
-    
-    .top-journal-table tr:hover {
-      background-color: #f8f9fa;
-    }
-    
-    .top-journal-table .rank {
-      font-weight: 700;
-      color: #1a73e8;
-    }
-    
-    .q1 { color: #4CAF50; }
-    .q2 { color: #2196F3; }
-    .q3 { color: #FF9800; }
-    .q4 { color: #F44336; }
-    
-    .b1 { color: #E91E63; }
-    .b2 { color: #9C27B0; }
-    .b3 { color: #673AB7; }
-    .b4 { color: #3F51B5; }
-    
-    .loading {
-      text-align: center;
-      padding: 40px;
-      color: #666;
-    }
-    
-    .loading .spinner {
-      width: 40px;
-      height: 40px;
-      border: 4px solid #f3f3f3;
-      border-top: 4px solid #1a73e8;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-      margin: 0 auto 16px;
-    }
-    
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-    
-    .no-data {
-      text-align: center;
-      padding: 40px;
-      color: #999;
-    }
-    
-    .back-btn {
-      display: inline-block;
-      padding: 10px 20px;
-      background-color: #1a73e8;
-      color: white;
+      cursor: pointer;
+      color: #fff;
+      background: #1a73e8;
       text-decoration: none;
-      border-radius: 4px;
-      font-weight: 500;
-      transition: background-color 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
     }
-    
-    .back-btn:hover {
-      background-color: #1557b0;
+    .btn:hover { background: #1557b0; }
+    .btn.green { background: #4CAF50; }
+    .btn.green:hover { background: #388E3C; }
+    .btn.orange { background: #f57c00; }
+    .btn.orange:hover { background: #e65100; }
+    .btn.gray { background: #f1f3f4; color: #444; }
+    .btn.gray:hover { background: #e0e2e5; }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .distribution-bar { display: flex; align-items: center; margin-bottom: 7px; }
+    .distribution-bar .label { width: 110px; font-size: 13px; flex-shrink: 0; }
+    .distribution-bar .pct { width: 46px; font-size: 11px; color: #888; text-align: right; flex-shrink: 0; }
+    .distribution-bar .bar-container {
+      flex: 1; height: 20px; background-color: #eceff1;
+      border-radius: 4px; overflow: hidden; margin: 0 10px;
     }
-    
-    .section-break {
-      margin-bottom: 24px;
+    .distribution-bar .bar { height: 100%; background-color: #1a73e8; border-radius: 4px; transition: width 0.3s ease; }
+    .distribution-bar .count { width: 48px; text-align: right; font-size: 13px; font-weight: 600; flex-shrink: 0; }
+
+    .q1 { color: #4CAF50; } .q2 { color: #2196F3; } .q3 { color: #FF9800; } .q4 { color: #F44336; } .na { color: #9E9E9E; }
+    .b1 { color: #E91E63; } .b2 { color: #9C27B0; } .b3 { color: #673AB7; } .b4 { color: #3F51B5; }
+
+    table.tbl { width: 100%; border-collapse: collapse; }
+    table.tbl th, table.tbl td { padding: 9px 10px; text-align: left; border-bottom: 1px solid #eee; font-size: 13px; }
+    table.tbl th { background: #f8f9fa; font-weight: 600; font-size: 12px; color: #555; cursor: pointer; user-select: none; white-space: nowrap; }
+    table.tbl th:hover { color: #1a73e8; }
+    table.tbl tr:hover { background: #f8f9fa; }
+    .tbl-wrap { overflow-x: auto; }
+    .rank { font-weight: 700; color: #1a73e8; }
+    .jm-link { color: #1a73e8; text-decoration: none; }
+    .jm-link:hover { text-decoration: underline; }
+    .badge { display: inline-block; padding: 1px 7px; border-radius: 10px; font-size: 11px; font-weight: 600; }
+    .badge-top { background: #ffc107; color: #333; }
+    .badge-oa { background: #c8e6c9; color: #2e7d32; }
+    .badge-non { background: #eceff1; color: #607d8b; }
+    .badge-unk { background: #e0e0e0; color: #757575; }
+
+    .loading { text-align: center; padding: 60px; color: #666; }
+    .loading .spinner {
+      width: 42px; height: 42px; border: 4px solid #f3f3f3; border-top-color: #1a73e8;
+      border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 16px;
     }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .no-data { text-align: center; padding: 60px; color: #777; }
+    .no-data p { margin-bottom: 14px; }
+
+    .note-box {
+      font-size: 12px; color: #666; background: #f8f9fa; border: 1px solid #e9ecef;
+      border-radius: 6px; padding: 8px 12px; margin-bottom: 10px; line-height: 1.7;
+    }
+    .empty { color: #999; font-size: 13px; padding: 12px 0; }
+    .footer { text-align: center; color: #999; font-size: 12px; padding: 10px 20px 30px; }
+    .two-col { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; }
   </style>
 </head>
 <body>
   <div class="header">
     <h1>📊 JournalMetrics - Statistics Analysis</h1>
-    <p>Analysis of journal impact factors, quartiles, and publication trends</p>
-    <p id="stats-timestamp" style="font-size: 12px; opacity: 0.7; margin-top: 4px;"></p>
+    <p id="stats-head-sub">Analysis of journal impact factors, quartiles, and publication trends</p>
+    <p id="stats-meta"></p>
+    <p id="stats-timestamp"></p>
   </div>
-  
+
   <div class="container">
     <div id="loading" class="loading">
       <div class="spinner"></div>
       <p>Loading analysis data...</p>
     </div>
-    
+
     <div id="content" style="display: none;">
+      <!-- actions -->
+      <div class="actions-bar">
+        <button class="btn orange" id="copy-summary-en" title="Copy an English summary to clipboard">📋 Copy summary (EN)</button>
+        <button class="btn orange" id="copy-summary-zh" title="Copy a Chinese summary to clipboard">📋 复制中文摘要</button>
+        <button class="btn green" id="export-csv" title="Export journal list as CSV (opens in Excel)">⬇ Export journals (CSV)</button>
+        <button class="btn gray" id="back-btn">← Back</button>
+      </div>
+
+      <!-- summary -->
       <div class="stats-card">
         <h2>📈 Summary</h2>
         <div class="summary-grid">
-          <div class="summary-item">
-            <div class="value" id="total-count">0</div>
-            <div class="label">Total Articles</div>
+          <div class="summary-item highlight-card">
+            <div class="value" id="s-total">0</div>
+            <div class="label">Analyzed Articles</div>
+            <div class="sub" id="s-total-sub"></div>
           </div>
           <div class="summary-item">
-            <div class="value" id="sci-count">0</div>
-            <div class="label">SCI Articles</div>
+            <div class="value" id="s-sci">0</div>
+            <div class="label">SCI (JCR/CAS listed)</div>
+            <div class="sub">matched in journal database</div>
           </div>
           <div class="summary-item">
-            <div class="value" id="avg-if">0.0</div>
+            <div class="value" id="s-abb">0</div>
+            <div class="label">Other known journals</div>
+            <div class="sub">non-SCI / unmatched to metrics</div>
+          </div>
+          <div class="summary-item">
+            <div class="value" id="s-unknown">0</div>
+            <div class="label">Unrecognized</div>
+            <div class="sub">journal not in database</div>
+          </div>
+          <div class="summary-item">
+            <div class="value" id="s-avgif">0.0</div>
             <div class="label">Average IF</div>
+            <div class="sub" id="s-avgif-sub"></div>
           </div>
           <div class="summary-item">
-            <div class="value" id="median-if">0.0</div>
+            <div class="value" id="s-medianif">0.0</div>
             <div class="label">Median IF</div>
+            <div class="sub" id="s-medianif-sub"></div>
           </div>
         </div>
+        <div id="summary-note" class="note-box"></div>
       </div>
-      
-      <div class="stats-card">
-        <h2>🏆 JCR Quartile Distribution</h2>
-        <div id="jcr-distribution"></div>
+
+      <div class="two-col">
+        <div class="stats-card">
+          <h2>🏆 JCR Quartile Distribution <span class="card-note">(SCI-listed articles)</span></h2>
+          <div id="jcr-distribution"></div>
+        </div>
+        <div class="stats-card">
+          <h2>🏢 CAS Block Distribution <span class="card-note">(SCI-listed articles)</span></h2>
+          <div id="cas-distribution"></div>
+        </div>
       </div>
-      
-      <div class="stats-card">
-        <h2>🏢 CAS Block Distribution</h2>
-        <div id="cas-distribution"></div>
+
+      <div class="two-col">
+        <div class="stats-card">
+          <h2>🧬 Discipline Distribution <span class="card-note" id="cls-note"></span></h2>
+          <div id="cls-distribution"></div>
+        </div>
+        <div class="stats-card">
+          <h2>🌐 Open Access Distribution <span class="card-note">(journal-level)</span></h2>
+          <div id="oa-distribution"></div>
+        </div>
       </div>
-      
+
       <div class="stats-card">
         <h2>📅 Publication Year Distribution</h2>
         <div id="year-distribution"></div>
       </div>
-      
+
       <div class="stats-card">
-        <h2>📊 Impact Factor Distribution</h2>
+        <h2>📊 Impact Factor Distribution <span class="card-note">(articles with numeric IF)</span></h2>
         <div id="if-distribution"></div>
       </div>
-      
+
       <div class="stats-card">
-        <h2>🌐 Open Access Distribution</h2>
-        <div id="oa-distribution"></div>
+        <h2>🎯 Top Journals by Publication Count</h2>
+        <div class="tbl-wrap">
+          <table class="tbl" id="journal-table">
+            <thead>
+              <tr>
+                <th data-key="rank">#</th>
+                <th data-key="name">Journal</th>
+                <th data-key="count">Count</th>
+                <th data-key="ifAvg">Avg IF</th>
+                <th data-key="jcr">JCR</th>
+                <th data-key="cas">CAS</th>
+                <th data-key="top">Top</th>
+                <th data-key="oa">OA</th>
+                <th data-key="apc">APC($)</th>
+                <th data-key="publisher">Publisher</th>
+                <th data-key="country">Country</th>
+              </tr>
+            </thead>
+            <tbody id="journal-tbody"></tbody>
+          </table>
+        </div>
+        <p style="margin-top:10px;">
+          <button class="btn gray" id="toggle-all-journals">Show all journals</button>
+          <span id="journal-count-note" style="font-size:12px;color:#888;margin-left:8px;"></span>
+        </p>
       </div>
-      
-      <div class="stats-card">
-        <h2>🎯 Top 10 Journals by Publication Count</h2>
-        <div style="overflow-x: auto;">
-        <table class="top-journal-table">
-          <thead>
-            <tr>
-              <th>Rank</th>
-              <th>Journal</th>
-              <th>Count</th>
-              <th>Avg IF</th>
-              <th>JCR</th>
-              <th>CAS</th>
-              <th>Self-Cite%</th>
-              <th>OA</th>
-              <th>APC</th>
-              <th>Articles</th>
-              <th>Publisher</th>
-              <th>Country</th>
-              <th>Website</th>
-            </tr>
-          </thead>
-          <tbody id="top-journals"></tbody>
-        </table>
+
+      <div class="two-col">
+        <div class="stats-card">
+          <h2>🔎 Unrecognized Journals <span class="card-note">(not in local database)</span></h2>
+          <div id="unmatched-list"></div>
+          <p style="font-size:12px;color:#999;margin-top:8px;">These journals were not matched to the bundled JCR/CAS list. Send this list to the developer to improve coverage.</p>
+        </div>
+        <div class="stats-card">
+          <h2>📚 Other Known Journals <span class="card-note">(non-SCI / not in metric list)</span></h2>
+          <div id="other-list"></div>
         </div>
       </div>
-      
-      <div class="section-break">
-        <a href="#" class="back-btn" id="back-btn">← Back to PubMed</a>
-      </div>
     </div>
-    
+
     <div id="no-data" class="no-data" style="display: none;">
-      <p>No analysis data available.</p>
-      <p>Please run analysis from the PubMed search results page.</p>
+      <p>No analysis data available yet.</p>
+      <p>Go to a PubMed search results page, then click the <b>Analyze</b> button and choose <b>Analyze current page</b> or <b>Analyze all search results</b>.</p>
+      <button class="btn" id="go-pubmed">Open PubMed</button>
     </div>
   </div>
-  
+
+  <div class="footer">Data source: bundled JCR &amp; CAS journal lists (may lag the latest release). JournalMetrics v1.2.0</div>
+
   <script src="stats.js"></script>
 </body>
 </html>
